@@ -1,19 +1,16 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"os"
-
-	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	router := gin.Default()
 
-	router.GET("/json", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, gin.H{
-			"foo": "bar",
-		})
+	mux := http.NewServeMux()
+	mux.HandleFunc("GET /json/", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprint(w, "json get request")
 	})
 
 	// Azure App Service sets the port as an Environment Variable
@@ -24,6 +21,5 @@ func main() {
 	if port == "" {
 		port = "8080"
 	}
-
-	router.Run("127.0.0.1:" + port)
+	http.ListenAndServe("127.0.0.1:"+port, mux)
 }
